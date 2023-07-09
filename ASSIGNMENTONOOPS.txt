@@ -1,0 +1,64 @@
+import java.util.HashMap;
+import java.util.Map;
+
+public class CarBilling {
+
+    private static final Map<String, Integer> carPrices = new HashMap<>();
+    private static final Map<String, Integer> additionalFees = new HashMap<>();
+
+    static {
+        // Initialize car prices
+        carPrices.put("Polo Trendline", 870000);
+        carPrices.put("Polo Highline", 1009000);
+        carPrices.put("Virtus Trendline", 1105000);
+        carPrices.put("Virtus Highline", 1308000);
+        carPrices.put("Taigun Trendline", 1489000);
+        carPrices.put("Taigun Highline", 1542000);
+        carPrices.put("Taigun Topline", 1771000);
+
+        // Initialize additional fees
+        additionalFees.put("RTO", 113990);
+        additionalFees.put("Insurance", 47300);
+        additionalFees.put("TCS charges", 11000);
+        additionalFees.put("Additional Accessories", 15000);
+    }
+
+    public static void main(String[] args) {
+        String carModel = "Virtus Highline";
+        String needInsurance = "yes";
+        String needAccessories = "no";
+        int dealerDiscount = 2;
+
+        String output = calculateTotalCost(carModel, needInsurance, needAccessories, dealerDiscount);
+        System.out.println(output);
+    }
+
+    public static String calculateTotalCost(String carModel, String needInsurance, String needAccessories, int dealerDiscount) {
+        int discount = 0;
+
+        if (needInsurance.equalsIgnoreCase("yes") || needAccessories.equalsIgnoreCase("yes")) {
+            discount = Math.min(dealerDiscount, 30000); // Apply maximum discount of 30,000
+        } else {
+            if (dealerDiscount > 0) {
+                return "Error: Either insurance or additional accessories must be selected with 0 discount.";
+            }
+        }
+
+        Integer carPrice = carPrices.get(carModel);
+        if (carPrice == null) {
+            return "Error: Invalid car model.";
+        }
+
+        int totalCost = carPrice + additionalFees.get("RTO") + additionalFees.get("TCS charges");
+
+        if (needInsurance.equalsIgnoreCase("yes")) {
+            totalCost += additionalFees.get("Insurance") - discount;
+        }
+
+        if (needAccessories.equalsIgnoreCase("yes")) {
+            totalCost += additionalFees.get("Additional Accessories") - discount;
+        }
+
+        return "Total cost: " + totalCost;
+    }
+}
